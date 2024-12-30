@@ -4,6 +4,10 @@ pandas-datareader
 numpy
 matplotlib
 pandas
-pandas-datareader
 tensorflow
 nltk
+flask>=2.0.0
+joblib>=1.1.0
+scikit-learn
+selenium
+beautifulsoup4>=4.9.0
