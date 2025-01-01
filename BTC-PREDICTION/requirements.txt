@@ -11,3 +11,5 @@ joblib>=1.1.0
 scikit-learn
 selenium
 beautifulsoup4>=4.9.0
+newsapi-python
+python-dotenv
