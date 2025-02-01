@@ -4,7 +4,7 @@ This project is an implementation based on this [paper](https://arxiv.org/pdf/22
 
 ---
 #### Methodology
-A Full explanation can be found in this [Medium article](https://medium.com/@devhanif/)
+A Full explanation can be found in this [Medium article](https://blog.hanif.one/)
 
 
 ---
