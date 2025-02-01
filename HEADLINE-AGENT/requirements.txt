@@ -3,3 +3,5 @@ requests
 langchain-community
 langchain-core
 langchain-openai
+langchain-groq
+langgraph
