@@ -3,4 +3,5 @@
 /BTC-PREDICTION/.env
 /HEADLINE-AGENT/.venv
 /HEADLINE-AGENT/.env
+/CODE-AGENT/.env
 github.sh
