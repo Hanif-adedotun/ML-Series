@@ -1,0 +1,23 @@
+Here are the latest technology headlines from TechCabal:
+
+1. **Safaricom and Kenyan banks push Pesalink as national payments backbone**  
+   Safaricom and Kenyan banks are advocating for the upgrade of Pesalink as the national payment system, arguing it is cheaper and faster than building a new system.
+
+2. **Bento lays off its entire tech team over protests for delayed salaries**  
+   Nigerian HR tech startup Bento laid off its entire tech team after they protested over delayed January salaries, leading to operational disruptions.
+
+3. **Nigeria launches National Broadband Alliance to boost internet**  
+   Nigeria aims to achieve 70% broadband penetration by 2025 through the National Broadband Alliance for Nigeria (NBAN), targeting key locations like schools and hospitals.
+
+4. **Inside the lives of Chowdeck and Glovo superusers**  
+   A deep dive into Nigeria’s food delivery superusers reveals how they spend heavily on apps like Chowdeck and Glovo to save time, with some averaging 236 orders per month.
+
+5. **Crypto Tracker**  
+   - Bitcoin: $97,832 (–0.51% in the last 24 hours)  
+   - Ether: $2,718 (+1.70% in the last 24 hours)  
+   - XRP: $2.49 (–2.13% in the last 24 hours)  
+   - Solana: $204.05 (+0.01% in the last 24 hours)  
+
+6. **Upcoming Events**  
+   - Africa Tech Summit in Nairobi (Feb 12–13, 2025)  
+   - GITEX AFRICA in Marrakech (April 14–16, 2025)  

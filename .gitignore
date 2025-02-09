@@ -5,3 +5,5 @@
 /HEADLINE-AGENT/.env
 /CODE-AGENT/.env
 github.sh
+HEADLINE-AGENT/yarngpt-test/content/wavtokenizer_large_speech_320_24k.ckpt
+HEADLINE-AGENT/yarngpt-test/content/wavtokenizer_mediumdata_frame75_3s_nq1_code4096_dim512_kmeans200_attn.yaml

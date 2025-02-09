@@ -58,6 +58,6 @@ def print_stream(stream):
         else:
             message.pretty_print()
 
-inputs = {"messages": [("user", "What is the latest technology headlines today")]}
+inputs = {"messages": [("user", "What is the latest technology headlines today? Generate a user readable response")]}
 
 print_stream(agent.stream(inputs, stream_mode="values"))
