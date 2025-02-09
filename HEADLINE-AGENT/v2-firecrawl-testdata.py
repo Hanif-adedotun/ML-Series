@@ -12,15 +12,28 @@ from langchain_groq import ChatGroq
 import json
 from langgraph.prebuilt import create_react_agent
 
+from firecrawl import FirecrawlApp
+from datetime import datetime
+
 TAVILY_API_KEY = os.environ['TAVILY_API_KEY']
 GROQ_API_KEY = os.environ['GROQ_KEY']
 GNEWS_API_KEY = os.environ['GNEWS_KEY']
+FIRE_CRAWL_KEY= os.environ['FIRE_CRAWL_KEY']
 
 @tool
 def get_technology_news(query: str) -> list:
-     """Get the latest technology news headlines from Techcabal"""
-     with open('static/tech-daily.json', 'r') as file:
-         return json.load(file)
+    """Get the latest technology news headlines from Techcabal"""
+    app = FirecrawlApp(api_key=FIRE_CRAWL_KEY)
+    crawl_result = app.crawl_url('https://techcabal.com', params={
+        'limit': 2,
+        'maxDepth': 5,
+        'includePaths': [ datetime.now().strftime('%Y/%m/%d') ],
+        'scrapeOptions': {
+            'formats': [ 'markdown' ],
+        }
+    })
+    data = crawl_result['data'][0]
+    return data['markdown']
 
      
 @tool

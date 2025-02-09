@@ -14,3 +14,4 @@ torchaudio
 outetts
 ipython
 spitch
+firecrawl-py

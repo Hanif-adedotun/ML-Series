@@ -16,7 +16,14 @@ print(llm)
 # Install with pip install firecrawl-py
 from firecrawl import FirecrawlApp
 
-app = FirecrawlApp(api_key='fc-3b033f2de61649cc88361e30c82b27d8')
+
+response = app.scrape_url(url='https://techcrunch.com/latest/', params={
+	'formats': [ 'markdown' ],
+})
+
+# Install with pip install firecrawl-py
+from firecrawl import FirecrawlApp
+
 
 crawl_result = app.crawl_url('https://techcabal.com', params={
 'limit': 10,
