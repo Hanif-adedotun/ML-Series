@@ -5,7 +5,7 @@ import re
 from dotenv import load_dotenv
 load_dotenv('.env')
 
-os.environ["SPITCH_API_KEY"] = ""
+os.environ["SPITCH_API_KEY"] = "sk_vdfGhhieS312CtTtnN89jnuWilTFxHEfXFkZmIZ5"
 client = Spitch()
 
 
@@ -22,34 +22,10 @@ text = re.sub(r'\s+', ' ', text)  # Normalize whitespace
 text = text.strip()  # Remove leading/trailing whitespace
 
 print(text)
-# def split_text_into_chunks(text, word_limit=25):
-#           """ 
-#           Function to split a long web page into reasonable chunks
-#           """
-#           sentences=[sentence.strip() for sentence in text.split('.') if sentence.strip()]
-#           chunks=[]
-#           for sentence in sentences:
-#                chunks.append(".")
-#           sentence_splitted=sentence.split(" ")
-#           num_words=len(sentence_splitted)
-#           start_index=0
-#           if num_words>word_limit:
-#                while start_index<num_words:
-#                     end_index=min(num_words,start_index+word_limit)
-#                     chunks.append(" ".join(sentence_splitted[start_index:start_index+word_limit]))
-#                     start_index=end_index
-#           else:
-#                chunks.append(sentence)
-#           return chunks
-     
-# print("Splitting text into chunks...")     
-# chunks=split_text_into_chunks(text)
-# print(f"Total chunks to process: {len(chunks)}")
 
-with open("news.wav", "wb") as f:
-    response = client.speech.generate(
-        text=" ".join(text.split()[:20]),
-        language="en",
-        voice="lucy"
-    )
-    f.write(response.read())
+with client.speech.with_streaming_response.generate(
+    text=text,
+    language="en",
+    voice="john"
+) as response:
+    response.stream_to_file("news-latest.wav")

@@ -33,7 +33,20 @@ def get_technology_news(query: str) -> list:
         }
     })
     data = crawl_result['data'][0]
-    return data['markdown']
+    # Split markdown content into lines and take first 20
+    markdown_lines = data['markdown'].split('\n')
+
+    # Extract sections starting with # startups and # FinTech
+    result = []
+    start_collecting = False
+    for line in markdown_lines:
+        if line.startswith('# startups') or line.startswith('# FinTech'):
+            start_collecting = True
+        if start_collecting:
+            result.append(line)
+            if line.startswith('#') and not (line.startswith('# startups') or line.startswith('# FinTech')):
+                break
+    return ' '.join(result)
 
      
 @tool
@@ -64,12 +77,19 @@ agent = create_react_agent(model=llm, tools=tools, state_modifier=system_prompt)
 
 # Lets query the agent to see the result.
 def print_stream(stream):
+    full_message = ""
     for s in stream:
         message = s["messages"][-1]
         if isinstance(message, tuple):
             print(message)
+            full_message += str(message) + "\n"
         else:
             message.pretty_print()
+            full_message += str(message) + "\n"
+    
+    # # Import and call send_email function with the full message
+    # from test-files.send_email import send_email
+    # send_email(full_message)
 
 inputs = {"messages": [("user", "What is the latest technology headlines today? Generate a user readable response")]}
 
