@@ -15,6 +15,8 @@ from langgraph.prebuilt import create_react_agent
 from firecrawl import FirecrawlApp
 from datetime import datetime
 
+from test_files.send_email import send_news_email
+
 TAVILY_API_KEY = os.environ['TAVILY_API_KEY']
 GROQ_API_KEY = os.environ['GROQ_KEY']
 GNEWS_API_KEY = os.environ['GNEWS_KEY']
@@ -87,9 +89,8 @@ def print_stream(stream):
             message.pretty_print()
             full_message += str(message) + "\n"
     
-    # # Import and call send_email function with the full message
-    # from test-files.send_email import send_email
-    # send_email(full_message)
+
+    send_news_email(full_message)
 
 inputs = {"messages": [("user", "What is the latest technology headlines today? Generate a user readable response")]}
 
