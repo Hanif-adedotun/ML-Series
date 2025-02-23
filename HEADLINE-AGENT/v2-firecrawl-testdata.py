@@ -10,10 +10,14 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.tools import tool
 from langchain_groq import ChatGroq
 import json
-from langgraph.prebuilt import create_react_agent
+from langchain_core.messages import AnyMessage, HumanMessage, SystemMessage, ToolMessage
 
 from firecrawl import FirecrawlApp
 from datetime import datetime
+
+from langgraph.prebuilt import ToolNode
+from langgraph.graph import StateGraph, MessagesState, START, END
+
 
 from test_files.send_email import send_news_email
 
@@ -50,6 +54,14 @@ def get_technology_news(query: str) -> list:
                 break
     return ' '.join(result)
 
+# system prompt is used to inform the tools available to when to use each
+SYSTEM_PROMPT = """Act as a helpful assistant.
+    Use the tools at your disposal to perform tasks as needed.
+        - get_technology_news: whenever user asks to get the latest technology headline.
+        - search_web: whenever user asks for information on current events or if you don't know the answer.
+    Use the tools only if you don't know the answer.
+    """
+    
      
 @tool
 def search_web(query: str) -> list:
@@ -65,33 +77,59 @@ llm = ChatGroq(
 tools = [search_web, get_technology_news]
 llm_with_tools = llm.bind_tools(tools)
 
+tool_node = ToolNode(tools)
 
-# system prompt is used to inform the tools available to when to use each
-system_prompt = """Act as a helpful assistant.
-    Use the tools at your disposal to perform tasks as needed.
-        - get_technology_news: whenever user asks to get the latest technology headline.
-        - search_web: whenever user asks for information on current events or if you don't know the answer.
-    Use the tools only if you don't know the answer.
-    """
+def call_model(state: MessagesState):
+     messages = state["messages"]
+     messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
+     response = llm_with_tools.invoke(messages)
+     return {"messages": [response]}
+
+def call_tools(state: MessagesState) -> Literal["tools", END]:
+    messages = state["messages"]
+    last_message = messages[-1]
+    if last_message.tool_calls:
+        return "tools"
+    return END
+
+def email_sender(state):
+    print('Sending email')
+    print('Email content:', state['messages'][-1].content)
+    print("Full state", state)
+
+# initialize the workflow from StateGraph
+workflow = StateGraph(MessagesState)
+
+# add a node named LLM, with call_model function. This node uses an LLM to make decisions based on the input given
+workflow.add_node("LLM", call_model)
+
+# Add send email edge
+workflow.add_node('email_sender', email_sender)
+
+# Our workflow starts with the LLM node
+workflow.add_edge(START, "LLM")
+
+# Add a tools node
+workflow.add_node("tools", tool_node)
+
+# Add a conditional edge from LLM to call_tools function. It can go tools node or end depending on the output of the LLM. 
+workflow.add_conditional_edges("LLM", call_tools)
+
+# tools node sends the information back to the LLM
+workflow.add_edge("tools", "LLM")
+
+# Structure response from LLM to email sender
+workflow.add_edge("LLM", "email_sender")
+
+# Email sender till end
+workflow.add_edge('email_sender', END)
+
+agent = workflow.compile()
+
+print(agent.get_graph().draw_mermaid())
+
+for chunk in agent.stream(
+    {"messages": [("user", "What is the latest technology headlines today? Generate a user readable response")]},
+    stream_mode="values",):
+    chunk["messages"][-1].pretty_print()
     
-# we can initialize the agent using the llama3 model, tools, and system prompt.
-agent = create_react_agent(model=llm, tools=tools, state_modifier=system_prompt)
-
-# Lets query the agent to see the result.
-def print_stream(stream):
-    full_message = ""
-    for s in stream:
-        message = s["messages"][-1]
-        if isinstance(message, tuple):
-            print(message)
-            full_message += str(message) + "\n"
-        else:
-            message.pretty_print()
-            full_message += str(message) + "\n"
-    
-
-    send_news_email(full_message)
-
-inputs = {"messages": [("user", "What is the latest technology headlines today? Generate a user readable response")]}
-
-print_stream(agent.stream(inputs, stream_mode="values"))
