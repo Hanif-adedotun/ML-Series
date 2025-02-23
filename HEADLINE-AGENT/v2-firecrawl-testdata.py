@@ -35,7 +35,7 @@ def get_technology_news(query: str) -> list:
         'maxDepth': 5,
         'includePaths': [ datetime.now().strftime('%Y/%m/%d') ],
         'scrapeOptions': {
-            'formats': [ 'markdown' ],
+            'formats': [ 'markdown'],
         }
     })
     data = crawl_result['data'][0]
@@ -92,10 +92,15 @@ def call_tools(state: MessagesState) -> Literal["tools", END]:
         return "tools"
     return END
 
-def email_sender(state):
-    print('Sending email')
-    print('Email content:', state['messages'][-1].content)
-    print("Full state", state)
+async def email_sender(state):
+    print('Email Sender')
+    
+    if state['messages'][-1].content.strip():
+        print('Email content:', state['messages'][-1].content)
+        await send_news_email(state['messages'][-1].content)
+        return;
+    
+             
 
 # initialize the workflow from StateGraph
 workflow = StateGraph(MessagesState)

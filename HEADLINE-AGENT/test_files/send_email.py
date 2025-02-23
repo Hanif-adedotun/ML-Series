@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 
-def send_news_email(news_data=None):
+def send_news_email(news_data=str):
     """
     Send an email with news summary.
     
@@ -22,7 +22,7 @@ def send_news_email(news_data=None):
 
     # Create the email message
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"Today's News Summary (Test 3) - {datetime.now().strftime('%Y-%m-%d')}"
+    msg["Subject"] = f"Today's News Summary (test 2) - {datetime.now().strftime('%Y-%m-%d')}"
     msg["From"] = sender_email
     msg["To"] = receiver_email
 
