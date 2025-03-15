@@ -10,13 +10,16 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.tools import tool
 from langchain_groq import ChatGroq
 import json
-from langchain_core.messages import AnyMessage, HumanMessage, SystemMessage, ToolMessage
+from langchain_core.messages import AnyMessage, HumanMessage, SystemMessage, ToolMessage, BaseMessage
 
 from firecrawl import FirecrawlApp
 from datetime import datetime
 
 from langgraph.prebuilt import ToolNode
 from langgraph.graph import StateGraph, MessagesState, START, END
+
+from pydantic import BaseModel, Field
+from typing import List
 
 
 from test_files.send_email import send_news_email
@@ -25,6 +28,14 @@ TAVILY_API_KEY = os.environ['TAVILY_API_KEY']
 GROQ_API_KEY = os.environ['GROQ_KEY']
 GNEWS_API_KEY = os.environ['GNEWS_KEY']
 FIRE_CRAWL_KEY= os.environ['FIRE_CRAWL_KEY']
+
+class HeadlineItem(BaseModel):
+     headline: str = Field(description="The news headline")
+     description: str = Field(description="A brief description of the news")
+
+class HeadlineResponse(BaseModel):
+    items: List[HeadlineItem] = Field(description="List of news headlines with descriptions")
+
 
 @tool
 def get_technology_news(query: str) -> list:
@@ -60,6 +71,9 @@ SYSTEM_PROMPT = """Act as a helpful assistant.
         - get_technology_news: whenever user asks to get the latest technology headline.
         - search_web: whenever user asks for information on current events or if you don't know the answer.
     Use the tools only if you don't know the answer.
+    Always respond with structured data in the format: 
+    - headline: The news headline
+    - description: A brief description of the news
     """
     
      
@@ -75,7 +89,7 @@ llm = ChatGroq(
     model="deepseek-r1-distill-llama-70b")
 
 tools = [search_web, get_technology_news]
-llm_with_tools = llm.bind_tools(tools)
+llm_with_tools = llm.bind_tools(tools, tool_choice="auto").with_structured_output(HeadlineResponse)
 
 tool_node = ToolNode(tools)
 
@@ -83,22 +97,36 @@ def call_model(state: MessagesState):
      messages = state["messages"]
      messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
      response = llm_with_tools.invoke(messages)
-     return {"messages": [response]}
+     # Convert HeadlineResponse to a HumanMessage
+     formatted_response = "Today's Technology Headlines:\n\n"
+     for item in response.items:
+         formatted_response += f"• {item.headline}\n   {item.description}\n\n"
+     return {"messages": [HumanMessage(content=formatted_response)]}
 
 def call_tools(state: MessagesState) -> Literal["tools", END]:
     messages = state["messages"]
     last_message = messages[-1]
-    if last_message.tool_calls:
+    # Check if the message has tool_calls attribute and if it has any calls
+    if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
         return "tools"
     return END
 
-async def email_sender(state):
-    print('Email Sender')
+def email_sender(state):
+     print('Email Sender')
+     last_message = state['messages'][-1]
     
-    if state['messages'][-1].content.strip():
-        print('Email content:', state['messages'][-1].content)
-        await send_news_email(state['messages'][-1].content)
-        return;
+     if isinstance(last_message.content, str):
+        email_content = last_message.content
+        print('Email content:', email_content)
+        send_news_email({
+          "items": [
+               {
+                    "headline": "News Headline",
+                    "description": email_content
+               },
+          ]})
+     else:
+        print('Invalid message format for email sending')
     
              
 

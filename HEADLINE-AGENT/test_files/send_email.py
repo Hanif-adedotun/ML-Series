@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 
-def send_news_email(news_data=str):
+def send_news_email(news_data):
     """
     Send an email with news summary.
     
@@ -48,18 +48,6 @@ def send_news_email(news_data=str):
     with open(email_template_path, "r") as file:
         html_content = file.read()
         
-        # Convert markdown data to news_items format
-        news_items = []
-        for line in data.strip().split('\n'):
-            if line.startswith('- **'):
-                headline_end = line.find('**:')
-                headline = line[4:headline_end]
-                description = line[headline_end+3:].strip()
-                news_items.append({
-                    'headline': headline,
-                    'description': description
-                })
-        
         # Find the content div and inject dynamic content
         content_div_start = html_content.find('<div class="content">')
         content_div_end = html_content.find('</div>', content_div_start)
@@ -71,9 +59,9 @@ def send_news_email(news_data=str):
         
         # Build new content HTML
         new_content = '<div class="content">'
-        for item in news_items:
+        for item in news_data['items']:
             new_content += f'''
-            <div class="headline">Headline: {item['headline']}</div>
+            <div class="headline">{item['headline']}</div>
             <div class="description">{item['description']}</div>
             <br>
             '''
