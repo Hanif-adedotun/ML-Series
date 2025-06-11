@@ -197,7 +197,7 @@ agent = workflow.compile()
 print(agent.get_graph().draw_mermaid())
 
 for chunk in agent.stream(
-    {"messages": [("user", "What is the latest technology headlines today? Generate a user readable response")]},
+    {"messages": [("user", "What are the top 5 latest technology headlines today? Generate a user readable response")]},
     stream_mode="values",):
     chunk["messages"][-1].pretty_print()
     

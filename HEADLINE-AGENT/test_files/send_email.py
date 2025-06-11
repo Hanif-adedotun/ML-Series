@@ -22,7 +22,7 @@ def send_news_email(news_data):
 
     # Create the email message
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"Today's News Summary (test 2) - {datetime.now().strftime('%Y-%m-%d')}"
+    msg["Subject"] = f"Today's News Summary new - {datetime.now().strftime('%Y-%m-%d')}"
     msg["From"] = sender_email
     msg["To"] = receiver_email
 
@@ -53,8 +53,8 @@ def send_news_email(news_data):
         content_div_end = html_content.find('</div>', content_div_start)
         
         # Add header
-        new_header = f'''<div class="header"> 
-        <h1>News Summary for {datetime.now().strftime('%A, %dth %B, %Y')}</h1>
+        new_header = f'''<div class="date"> 
+        <p>News Summary for {datetime.now().strftime('%A, %dth %B, %Y')}</p>
         </div>'''
         
         # Build new content HTML
