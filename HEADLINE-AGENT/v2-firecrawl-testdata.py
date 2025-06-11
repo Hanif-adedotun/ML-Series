@@ -117,7 +117,42 @@ def email_sender(state):
     
      if isinstance(last_message.content, str):
         email_content = last_message.content
+        if email_content is None:
+            print('No email content to send')
+            return
         print('Email content:', email_content)
+        # Parse the email content into structured format
+        headlines = []
+        current_headline = None
+        current_description = None
+        
+        for line in email_content.split('\n'):
+            line = line.strip()
+            if line.startswith('•'):
+                # If we have a previous headline, save it
+                if current_headline and current_description:
+                    headlines.append({
+                        "headline": current_headline,
+                        "description": current_description.strip()
+                    })
+                # Start new headline
+                parts = line[1:].strip().split('\n')
+                current_headline = parts[0].strip()
+                current_description = ""
+            elif line and current_headline:
+                current_description += line + " "
+        
+        # Add the last headline if exists
+        if current_headline and current_description:
+            headlines.append({
+                "headline": current_headline,
+                "description": current_description.strip()
+            })
+        
+        # Send email with structured data
+        send_news_email({
+            "items": headlines
+        })
         send_news_email({
           "items": [
                {
@@ -126,7 +161,7 @@ def email_sender(state):
                },
           ]})
      else:
-        print('Invalid message format for email sending')
+         print('No formatted response available for email sending')
     
              
 
