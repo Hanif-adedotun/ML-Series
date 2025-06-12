@@ -153,13 +153,13 @@ def email_sender(state):
         send_news_email({
             "items": headlines
         })
-        send_news_email({
-          "items": [
-               {
-                    "headline": "News Headline",
-                    "description": email_content
-               },
-          ]})
+        # send_news_email({
+        #   "items": [
+        #        {
+        #             "headline": "News Headline",
+        #             "description": email_content
+        #        },
+        #   ]})
      else:
          print('No formatted response available for email sending')
     
@@ -197,7 +197,7 @@ agent = workflow.compile()
 print(agent.get_graph().draw_mermaid())
 
 for chunk in agent.stream(
-    {"messages": [("user", "What are the top 5 latest technology headlines today? Generate a user readable response")]},
+    {"messages": [("user", "What are the top latest technology headlines today? Generate a user readable response")]},
     stream_mode="values",):
     chunk["messages"][-1].pretty_print()
     
