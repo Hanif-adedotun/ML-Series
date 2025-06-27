@@ -74,6 +74,10 @@ SYSTEM_PROMPT = """Act as a helpful assistant.
     Always respond with structured data in the format: 
     - headline: The news headline
     - description: A brief description of the news
+    
+    IMPORTANT
+    - Ensure your response is not generic, add important information to the headlines.
+    - Retain important infomation of the headline, e.g Company Name, Product name, Country, these are IMPORTANT DETAILS
     """
     
      
@@ -86,7 +90,7 @@ def search_web(query: str) -> list:
 
 llm = ChatGroq(
     api_key=GROQ_API_KEY,
-    model="deepseek-r1-distill-llama-70b")
+    model="llama-3.3-70b-versatile")
 
 tools = [search_web, get_technology_news]
 llm_with_tools = llm.bind_tools(tools, tool_choice="auto").with_structured_output(HeadlineResponse)
@@ -150,16 +154,9 @@ def email_sender(state):
             })
         
         # Send email with structured data
+        print("headlines", headlines)
         send_news_email({
-            "items": headlines
-        })
-        # send_news_email({
-        #   "items": [
-        #        {
-        #             "headline": "News Headline",
-        #             "description": email_content
-        #        },
-        #   ]})
+          "items": headlines})
      else:
          print('No formatted response available for email sending')
     
@@ -197,7 +194,7 @@ agent = workflow.compile()
 print(agent.get_graph().draw_mermaid())
 
 for chunk in agent.stream(
-    {"messages": [("user", "What are the top latest technology headlines today? Generate a user readable response")]},
+    {"messages": [("user", "What are the top 10 latest technology headlines today? Generate a user readable response")]},
     stream_mode="values",):
     chunk["messages"][-1].pretty_print()
     
