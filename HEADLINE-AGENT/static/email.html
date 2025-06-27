@@ -24,7 +24,6 @@
 
           .header {
                background-color: #30495F;
-               /* Purple #1DCFF6 */
                color: #fff;
                text-align: center;
                padding: 20px;
@@ -37,7 +36,6 @@
 
           .headline {
                color: #30495F;
-               /* Purple */
                font-size: 18px;
                font-weight: bold;
                margin-bottom: 10px;
@@ -64,10 +62,10 @@
                font-size: 12px;
           }
 
-          /* Image Grid Styles */
+          /* Table-based Image Grid Styles */
           .image-grid {
                width: 100%;
-               margin: 20px 0;
+               margin: 0 0;
                padding: 10px 0;
                background-color: #f9f9f9;
                border-radius: 15px;
@@ -77,64 +75,59 @@
                text-align: center;
                color: #666;
                font-size: 18px;
-               margin-top: 20px;
+               margin: 20px 0;
           }
 
-          .grid-row {
-               display: flex;
-               gap: 10px;
-               margin-bottom: 10px;
-               padding: 0 20px;
-               padding-left: 10px;
-               width: calc(100%-50px);
+          .image-table {
+               width: 100%;
+               border-collapse: collapse;
+               margin: 0 auto;
+               max-width: 580px;
           }
 
-          .grid-row:last-child {
-               margin-bottom: 0;
+          .image-cell {
+               padding: 5px;
+               vertical-align: top;
           }
 
-          .grid-item {
+          .image-wrapper {
                position: relative;
                overflow: hidden;
                border-radius: 8px;
                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-               aspect-ratio: 16/9;
-               max-width: 100%;
+               width: 100%;
+               height: 120px;
           }
 
-          .grid-item img {
+          .image-wrapper img {
                width: 100%;
                height: 100%;
                object-fit: cover;
-               transition: transform 0.3s ease;
                display: block;
+               border: 0;
+               outline: none;
           }
 
-          .grid-item:hover img {
-               transform: scale(1.05);
-          }
-
-          .grid-item.large {
-               flex: 0 0 65%;
-               max-width: 65%;
-          }
-
-          .grid-item.small {
-               flex: 0 0 35%;
-               max-width: 35%;
-          }
-
-          /* Responsive adjustments */
-          @media screen and (max-width: 768px) {
-               .grid-row {
-                    flex-direction: column;
-                    gap: 15px;
+          /* Responsive fallback for mobile */
+          @media screen and (max-width: 600px) {
+               .container {
+                    width: 100% !important;
+                    margin: 0 !important;
+                    border-radius: 0 !important;
                }
 
-               .grid-item.large,
-               .grid-item.small {
-                    flex: 0 0 100%;
-                    max-width: 100%;
+               .image-table {
+                    width: 100% !important;
+               }
+
+               .image-cell {
+                    display: block !important;
+                    width: 100% !important;
+                    padding: 10px !important;
+               }
+
+               .image-wrapper {
+                    height: 200px !important;
                }
           }
      </style>
@@ -142,29 +135,48 @@
 
 <body>
      <div class="container">
-          <div class="header">
-               <h1>News Summary</h1>
-          </div>
-
           <div class="image-grid">
-               <div class="grid-row">
-                    <div class="grid-item large" style="width: 60%; height: 120px;">
-                         <img src="https://raw.githubusercontent.com/Hanif-adedotun/ML-Series/main/HEADLINE-AGENT/static/images/image2.png"
-                              alt="News Image 1">
-                    </div>
-                    <div class="grid-item small" style="width: 20%; height: 120px;">
-                         <img src="https://raw.githubusercontent.com/Hanif-adedotun/ML-Series/main/HEADLINE-AGENT/static/images/image1.jpg"
-                              alt="News Image 2">
-                    </div>
+               <!-- News Summary Header inside the grey box -->
+               <div
+                    style="background-color: #30495F; color: #fff; text-align: center; padding: 20px; margin: 10px; border-radius: 15px; height: 60px;">
+                    <h1 style="margin: 0; font-size: 24px; font-weight: bold; color: #fff; margin-top: 18px; ">News
+                         Summary
+                    </h1>
                </div>
 
-               <h1>Top Headlines Brought to you by AI</h1>
-          </div>
-          <div class="content">
+               <!-- Table-based layout for email compatibility -->
+               <table class="image-table" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                         <td class="image-cell" width="65%" style="width: 65%;">
+                              <div class="image-wrapper">
+                                   <img src="https://raw.githubusercontent.com/Hanif-adedotun/ML-Series/main/HEADLINE-AGENT/static/images/image2.png"
+                                        alt="News Image 1"
+                                        style="width: 100%; height: 120px; object-fit: cover; display: block; border: 0;">
+                              </div>
+                         </td>
+                         <td class="image-cell" width="35%" style="width: 35%;">
+                              <div class="image-wrapper">
+                                   <img src="https://raw.githubusercontent.com/Hanif-adedotun/ML-Series/main/HEADLINE-AGENT/static/images/image1.jpg"
+                                        alt="News Image 2"
+                                        style="width: 100%; height: 120px; object-fit: cover; display: block; border: 0;">
+                              </div>
+                         </td>
+                    </tr>
+               </table>
 
+               <div style="text-align: center; margin: 20px 10px 10px 10px;">
+                    <h2 style="color: #666; font-size: 18px; margin: 0;">Top Headlines Brought to you by AI</h2>
+               </div>
           </div>
+
+          <div class="content">
+               <!-- Content goes here -->
+          </div>
+
           <div class="footer">
-               &copy; 2025 <a href="https://hanif.one">Hanif</a>. All rights reserved.
+               &copy; 2025 <a href="https://hanif.one" style="color: #666;">Hanif</a> and <a
+                    href="mailto:maigaridavid90@gmail.com" style="color: #666;">Maigari</a>. All rights
+               reserved.
           </div>
      </div>
 </body>

@@ -17,14 +17,14 @@ def send_news_email(news_data):
     smtp_server = os.environ['SMTP_KEY']
     smtp_port = int(os.environ['SMTP_PORT'])
     sender_email = os.environ['SENDER_EMAIL']
-    receiver_email = os.environ['RECEIVER_EMAIL']
+    receiver_emails = os.environ['RECEIVER_EMAIL'].split(',')
     password = os.environ['PASSWORD']
 
     # Create the email message
     msg = MIMEMultipart("alternative")
     msg["Subject"] = f"Today's News Summary new - {datetime.now().strftime('%Y-%m-%d')}"
     msg["From"] = sender_email
-    msg["To"] = receiver_email
+    msg["To"] = ', '.join(receiver_emails)  # Join emails for the "To" header
 
     # Get the absolute path to the email template
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -32,17 +32,6 @@ def send_news_email(news_data):
 
     # Use provided data or default test data
     data = news_data 
-    
-    test_data = '''
-    - **Bento Africa Temporarily Halts Operations**: Bento Africa has suspended its operations after rehiring staff to handle a backlog of tasks. This comes after the company faced protests over delayed January salaries.  
-    - **Marasoft Denies Fraud Allegations**: Marasoft has denied fraud allegations but failed to provide evidence, blaming "disgruntled" ex-employees for the claims.  
-    - **Nigerian Fintechs Revamp Operations**: Moniepoint, OPay, and PalmPay have improved their data collection and compliance measures following a 2024 ban.  
-    - **Lemfi Acquires Bureau Buttercrane**: Lemfi has completed the acquisition of Irish currency exchange Bureau Buttercrane, marking its entry into the European market.  
-    - **NIBSS Bets on QR Codes**: The Nigeria Inter-Bank Settlement System (NIBSS) is promoting QR codes as a cash alternative for small-value payments.  
-    - **Safaricom and Kenyan Banks Propose Pesalink**: Safaricom and Kenyan commercial banks are pushing for Pesalink to overhaul the national payment system.  
-    - **Moniepoint Mirrors Jack Dorsey's Square**: Moniepoint has launched a new POS system inspired by Jack Dorsey's Square.  
-    - **Stitch Acquires ExiPay**: South African fintech Stitch has acquired ExiPay to expand into in-person payments.
-    '''
 
     # Read the HTML template and inject dynamic content
     with open(email_template_path, "r") as file:
@@ -79,7 +68,7 @@ def send_news_email(news_data):
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
         server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, msg.as_string())
+        server.sendmail(sender_email, receiver_emails, msg.as_string())
         print("Email sent successfully!")
         return True
     except Exception as e:
@@ -87,3 +76,8 @@ def send_news_email(news_data):
         return False
     finally:
         server.quit()
+        
+if __name__ == "__main__":   
+    headlines = [{'headline': 'New AI Model Released', 'description': 'A new AI model has been released, capable of learning and adapting at an unprecedented rate.'}, {'headline': 'Breakthrough in Quantum Computing', 'description': 'Scientists have made a major breakthrough in quantum computing, paving the way for faster and more secure processing.'}, {'headline': '5G Networks Expand Globally', 'description': '5G networks are expanding globally, providing faster and more reliable internet connectivity to millions of people.'}]
+    send_news_email({
+            "items": headlines})
