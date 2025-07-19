@@ -16,3 +16,4 @@ ipython
 spitch
 firecrawl-py
 gTTS
+streamlit

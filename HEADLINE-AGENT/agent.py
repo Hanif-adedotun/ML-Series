@@ -191,10 +191,12 @@ workflow.add_edge('email_sender', END)
 
 agent = workflow.compile()
 
-print(agent.get_graph().draw_mermaid())
+# Only run this if the script is executed directly (not imported)
+if __name__ == "__main__":
+    print(agent.get_graph().draw_mermaid())
 
-for chunk in agent.stream(
-    {"messages": [("user", "What are the top 10 latest technology headlines today? Generate a user readable response")]},
-    stream_mode="values",):
-    chunk["messages"][-1].pretty_print()
+    for chunk in agent.stream(
+        {"messages": [("user", "What are the top 10 latest technology headlines today? Generate a user readable response")]},
+        stream_mode="values",):
+        chunk["messages"][-1].pretty_print()
     
